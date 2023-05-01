@@ -21,7 +21,7 @@ Note: data are not on the github repo. Create a local `data` folder with structu
 
 ---`noise_data_month` <a href="https://drive.google.com/drive/folders/1HT-ctj8Aj6qcVMZYBxi3YM4XC9fbFjSN?usp=share_link" target="_blank">Download</a>
 
----`noise_sub`
+---`noise_sub`: data in this folder are created by running `import.ipynb
 
 
 
