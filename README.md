@@ -4,7 +4,7 @@
 
 ### Team Monaco
 
-Note: data are not on the github repo. Create a local `data` folder in the repo with structure: 
+Note: data are not on the github repo. Create a local `data` folder with structure: 
 
 
 -- `data`
