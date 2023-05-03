@@ -1,15 +1,19 @@
 import pandas as pd
 import numpy as np
 import boto3
+import os
 
 def import_s3_noise_data_export(folder_num):
     """ Import noise data from s3 bucket. Specify folder number: 40, 41, 42"""
+
+    # Connect to s3 bucket
     client = boto3.client('s3')
 
     response = client.list_objects_v2(
         Bucket='mda.project.monaco',
         Prefix='noise_data/export_%d' %(folder_num))
     
+    # Concatenate all csvs in folder
     df = pd.concat([pd.read_csv("s3://mda.project.monaco/"+file['Key'], sep=';')for file in response.get('Contents', [])])
 
     return(df)
@@ -30,12 +34,15 @@ def import_noise_event_data():
 
 def import_s3_noise_data_month(month):
     """ Import noise data from s3 bucket "noise_data_month" folder where each folder corresponds to one month with noise data. """
+
+    # Connect to s3 bucket
     client = boto3.client('s3')
 
     response = client.list_objects_v2(
         Bucket='mda.project.monaco',
         Prefix='noise_data_month/%s' %(month))
     
+    # Concatenate all csvs in folder
     df = pd.concat([pd.read_csv("s3://mda.project.monaco/"+file['Key'], sep=';')for file in response.get('Contents', [])])
 
     return(df)
@@ -106,6 +113,15 @@ def import_meteo(quarter):
     return(df_meteo)
 
 def create_final_csv_by_month(month):
+
+    """ 
+    Create final csvs, one for each month. Note: when running this function results are saved locally in "data/noise_sub/". For the project the folder has then be manually uploaded in s3 bucket and made public.   
+    """
+
+    # If data/noise_sub folder does not exist, create one
+    if not(os.path.exists("data/noise_sub")): 
+        os.mkdir("data/noise_sub")
+
     # Import data for the selected month
     df = import_s3_noise_data_month(month)
 
@@ -179,4 +195,26 @@ def create_final_csv_by_month(month):
     df = pd.merge(left = df, right=df_meteo, on = "result_timestamp")
 
     # Save as csv
-    df.to_csv("data/noise_sub/%s_sub.csv" %(month), index = False) 
+    df.to_csv("data/noise_sub/%s_sub.csv" %(month), index = False)
+
+def concatenate_noise_sub_csv():
+    """ 
+    Concatenate all csv in noise_sub folder in s3 bucket. 
+    Note: when running this function the csv is saved locally in "data/". For the project, the file has then be manually uploaded in s3 bucket and made public.   
+    """
+
+    # If data folder does not exist, create one
+    if not(os.path.exists("data/")): 
+        os.mkdir("data/")
+    
+    # Connect to s3 bucket
+    client = boto3.client('s3')
+
+    response = client.list_objects_v2(
+        Bucket='mda.project.monaco',
+        Prefix='noise_sub/')
+    
+    # Concatenate all csvs
+    df = pd.concat([pd.read_csv("s3://mda.project.monaco/"+file['Key'])for file in response.get('Contents', [])])
+
+    df.to_csv("data/project_data.csv", index = False)  
