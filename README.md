@@ -16,7 +16,9 @@ Goal: Provide insights into what contributes to noise in the Naamsestraat (Leuve
 
 * Just in case you would like to re-run the notebook to create the final dataset, note: 
 
-  + The code to create the final csv is in `create_final_csv_functions.py` and `create_final_csv_project_data.ipynb`. 
+  + <ins> I think I reached the free tier usage limit of 2000 LIST requests, so **run the code only if really necessary, please :)** </ins>
+
+  + The code to create the final csv is in `create_final_csv_functions.py` and `create_final_csv_project_data.ipynb`
   
   + All the noise data and meteo data that we were given are stored in a public s3 bucket:
     
