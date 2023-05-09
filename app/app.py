@@ -30,6 +30,21 @@ fig = px.line(data_frame=df['laeq'].groupby([df.result_timestamp.dt.dayofyear,df
                      'laeq':'Mean level of noise'},
             )
 
+px.set_mapbox_access_token("pk.eyJ1IjoiYmVydG9sZG9naXVsaWEiLCJhIjoiY2xoZ2FzdXF3MXluYTNmcGNtdWZjbGFwcSJ9.0nLVkEGkQwV5j_QOBfsQeQ")
+df['time'] = df['result_timestamp'].dt.time
+map = px.scatter_mapbox(df,
+              lat="lat" ,
+              lon="lon",
+              animation_frame= "time",
+              mapbox_style='carto-positron',
+              size = "laeq",
+              color = "laeq",
+              color_continuous_scale=px.colors.cyclical.IceFire,  
+              hover_data = ['time', "description"], 
+              size_max = 10,               
+              zoom=14)
+
+
 date_range = dcc.DatePickerRange(
     id = 'id_date_range',
     min_date_allowed=datetime.datetime(2022,1,1),
@@ -75,7 +90,9 @@ app.layout = dbc.Container(
                     width=2),
             dbc.Col(dbc.Stack([html.H4(children='...',id='id_title'),
                                html.Div(children=dcc.Graph(id="id_graph",config={"displayModeBar": False},figure=fig),
-                        className='card')],
+                            className='card'),
+                            html.Div(children=dcc.Graph(id="id_map",config={"displayModeBar": False},figure=map),
+                                     className='card')],
                         ),
                 width=10,
                 ),
