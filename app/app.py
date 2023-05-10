@@ -39,9 +39,13 @@ map = px.scatter_mapbox(df,
               mapbox_style='carto-positron',
               size = "laeq",
               color = "laeq",
-              color_continuous_scale=px.colors.cyclical.IceFire,  
+              color_continuous_scale=px.colors.cyclical.Twilight,  
               hover_data = ['time', "description"], 
-              size_max = 10,               
+              size_max = 10,     
+              title = "Noise level during night-time across all days of the year",  
+              labels={
+                  "laeq": "Mean noise level"
+              },         
               zoom=14)
 
 
