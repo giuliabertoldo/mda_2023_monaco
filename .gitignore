@@ -2,3 +2,4 @@
 .DS_Store
 read_keys.ipynb
 .aws
+/old_scripts
