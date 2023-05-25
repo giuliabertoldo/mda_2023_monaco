@@ -11,7 +11,7 @@ import math
 # 2. Create project
 # 3. Enable places API in the project 
 # 4. Copy your API key 
-api_key = "<copy yor api key here>"
+api_key = "paste yor api key here>"
 
 def urls_locations (df):
     """ Given a dataframe with location name, latitude and longitude, return  urls to be used in requests to Google Maps API for the locals within a radius of 100m. """
