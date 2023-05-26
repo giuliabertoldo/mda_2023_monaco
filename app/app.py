@@ -148,7 +148,7 @@ def updated_chart(location, start_date, end_date):
             x='result_timestamp',
             y='laeq',
             color='description',
-            labels={'result_timestamp':'Day of month',
+            labels={'result_timestamp':'Day of year',
                     'laeq':'Mean level of noise',
                     'lc_dwptemp': 'Average temperature'},
             hover_data={'result_timestamp': True,
