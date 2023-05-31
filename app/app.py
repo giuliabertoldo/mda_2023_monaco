@@ -15,154 +15,49 @@ import plotly.express as px
 from data import df
 
 
-app = dash.Dash(__name__,title='MDA_project', external_stylesheets=[dbc.themes.BOOTSTRAP],serve_locally = False)
-
-df.result_timestamp = pd.to_datetime(df.result_timestamp)
-months = df.month.sort_values().unique()
-locations = df.description.sort_values().unique()
+app = dash.Dash(__name__,title='MDA_project', external_stylesheets=[dbc.themes.BOOTSTRAP],serve_locally = False,use_pages=True)
 
 
-fig = px.line(data_frame=df['laeq'].groupby([df.result_timestamp.dt.dayofyear,df.description]).mean().reset_index(),
-             x='result_timestamp',
-             y='laeq',
-             color='description',
-             labels={'result_timestamp':'Day of year',
-                     'laeq':'Mean level of noise'},
-            )
-
-px.set_mapbox_access_token("pk.eyJ1IjoiYmVydG9sZG9naXVsaWEiLCJhIjoiY2xoZ2FzdXF3MXluYTNmcGNtdWZjbGFwcSJ9.0nLVkEGkQwV5j_QOBfsQeQ")
-df['time'] = df['result_timestamp'].dt.time
-map = px.scatter_mapbox(df,
-              lat="lat" ,
-              lon="lon",
-              animation_frame= "time",
-              mapbox_style='carto-positron',
-              size = "laeq",
-              color = "laeq",
-              color_continuous_scale=px.colors.cyclical.Twilight,  
-              hover_data = ['time', "description"], 
-              size_max = 10,     
-              title = "Noise level during night-time across all days of the year",  
-              labels={
-                  "laeq": "Mean noise level"
-              },         
-              zoom=14)
-
-
-date_range = dcc.DatePickerRange(
-    id = 'id_date_range',
-    min_date_allowed=datetime.datetime(2022,1,1),
-    max_date_allowed=datetime.datetime(2022,12,31),
-    start_date=datetime.datetime(2022,1,1),
-    end_date=datetime.datetime(2022,12,31),
-    display_format='DD MM YYYY',
+navBar = html.Nav(children=[
+        dcc.Link('Overview',
+                href='/',
+                className='link',
+                style={"margin-right": "20px"},),
+        dcc.Link('Details',
+                href='/details',
+                className='link',),
+        dcc.Link('Model',
+                href='/model',
+                className='link',),
+                ],
+        style={
+        'display': 'flex',
+        "background-color": "#F7F7F7",
+        "height": "50px",
+        "align-items": "center",
+        "justify-content": "space-between",
+        "margin-left": "500px",  
+        "margin-right": "500px", 
+        "font-family": "'Roghiska', sans-serif",
+        },
 )
 
 
-dropdown = dcc.Dropdown(
-    id='id_location',
-    options=[
-        {'label':'All', 'value':'All'},
-        {'label':'Naamsestraat 35', 'value':'MP 01: Naamsestraat 35  Maxim'},
-        {'label':'Naamsestraat 57', 'value':'MP 02: Naamsestraat 57 Xior'},
-        {'label':'Naamsestraat 62', 'value':'MP 03: Naamsestraat 62 Taste'},
-        {'label':'His & Hears', 'value':'MP 04: His & Hears'},
-        {'label':'Calvariekapel', 'value':'MP 05: Calvariekapel KU Leuven'},
-        {'label':'Parkstraat 2', 'value':'MP 06: Parkstraat 2 La Filosovia'},
-        {'label':'Naamsestraat 81', 'value':'MP 07: Naamsestraat 81'},
-        {'label':'Vrijthof', 'value':'MP08bis - Vrijthof'},
-    ],
-    value="All",
-    clearable=False,
-    className="dropdown",
-)
-
-app.layout = dbc.Container(
-    [
+app.layout = html.Div(
+    [ 
         html.Div(children=[html.H1(children='MDA Project', className="header-title"),
                             html.H2(children='Monaco',className="header-description"),
-                                    ],
+                            ],
                             className="header",
         ),
-        html.Hr(),
-        dbc.Row(
-            [
-            dbc.Col(dbc.Stack([html.H4(children='Location:',className='header-description'),
-                    dropdown,
-                    html.H4(children='Time period:',className='header-description'),
-                    date_range]), 
-                    width=2),
-            dbc.Col(dbc.Stack([html.H4(children='...',id='id_title'),
-                               html.Div(children=dcc.Graph(id="id_graph",config={"displayModeBar": False},figure=fig),
-                            className='card'),
-                            html.Div(children=dcc.Graph(id="id_map",config={"displayModeBar": False},figure=map),
-                                     className='card')],
-                        ),
-                width=10,
-                ),
-             ],
-             align = 'start',
+        html.Link(
+            rel="stylesheet",
+            href="/assets/styles.css"  # Path to the CSS file
         ),
-    ],
-    fluid = True    
-)
+        navBar,
+        dash.page_container,
+])
 
-
-@app.callback(
-    Output('id_title','children'),
-    Output('id_graph','figure'),
-    [Input('id_location','value'),
-     Input('id_date_range','start_date'),
-     Input('id_date_range','end_date')
-    ]
-)
-def updated_chart(location, start_date, end_date):
-    try:
-        start_date = pd.to_datetime(start_date)
-        end_date = pd.to_datetime(end_date)
-    except:
-        id_graph_figure = px.line(data_frame=df.groupby([df.result_timestamp.dt.day_of_year,
-                                                                df.description]).mean('laeq').reset_index(),
-                x='result_timestamp',
-                y='laeq',
-                color='description',
-                labels={'result_timestamp':'Day of year',
-                        'laeq':'Mean level of noise'},
-                )
-
-
-
-    if location != 'All':
-        filtered_data = df.query(
-            'description == @location'
-        )
-    else:
-        filtered_data = df
-    
-    filtered_data = filtered_data[(filtered_data['result_timestamp'] >= start_date)]
-    filtered_data = filtered_data[(filtered_data['result_timestamp'] <= end_date)]
-
-    id_graph_figure = px.line(data_frame=filtered_data.
-                              groupby([filtered_data.result_timestamp.dt.day_of_year,
-                                    filtered_data.description]).mean(['laeq','lc_dwptemp']).reset_index(),
-            x='result_timestamp',
-            y='laeq',
-            color='description',
-            labels={'result_timestamp':'Day of year',
-                    'laeq':'Mean level of noise',
-                    'lc_dwptemp': 'Average temperature'},
-            hover_data={'result_timestamp': True,
-                        'description': False,
-                        'laeq': False,
-                        'lc_dwptemp': True,
-                        }
-            )
-    id_graph_figure.update_traces(mode="markers+lines")
-    
-    
-    
-    return 'Average daily noise level between: ' + start_date.strftime('%d-%m-%Y') + ' -> ' + end_date.strftime('%d-%m-%Y'), id_graph_figure
-        
 
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=False)
