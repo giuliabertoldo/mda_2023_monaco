@@ -5,10 +5,8 @@ from dash import dcc, callback
 
 import numpy as np
 import datetime
-import plotly
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
-from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import plotly.express as px
 import pickle
@@ -27,9 +25,9 @@ model = pickle.load(open('pickle_rf_model.pkl', 'rb'))
 pred = model.predict(df_pred)
 
 
-clf = model[-1]
-data = list(zip(clf.feature_names_in_, clf.feature_importances_))
-df_importances = pd.DataFrame(data, columns=['Feature', 'Importance']).sort_values(by='Importance', ascending=False)
+clf = model.best_estimator_[-1]
+feat_imp = list(zip(clf.feature_names_in_, clf.feature_importances_))
+df_importances = pd.DataFrame(feat_imp, columns=['Feature', 'Importance']).sort_values(by='Importance', ascending=False)
 df_imp = df_importances.groupby('Feature').sum('Importance').sort_values(by='Importance', ascending=False).reset_index()
 df_imp = df_imp.iloc[:15]
 fig = px.bar(df_imp, y='Feature', x='Importance', orientation='h', template="simple_white", height=375)
