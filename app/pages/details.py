@@ -213,7 +213,7 @@ def update_graph4(location):
     hist_data_2 = []
     for c in vals:
         ls = df_loc.loc[df_loc['hour']==c, 'laeq']
-        hist_data.append(list(ls))
+        hist_data_2.append(list(ls))
 
     id_graph_figure_4 = ff.create_distplot(hist_data_2, group_labels, show_hist=False, show_curve=True, show_rug=False)
 
