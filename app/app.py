@@ -34,7 +34,9 @@ navBar = html.Nav(children=[
         "background-color": "#F7F7F7",
         "height": "50px",
         "align-items": "center",
-        "justify-content": "space-between", 
+        "justify-content": "space-between",
+        "margin-left": "500px",  
+        "margin-right": "500px", 
         "font-family": "'Roghiska', sans-serif",
         },
 )
