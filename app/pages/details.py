@@ -144,9 +144,9 @@ def update_graph1(location):
     filtered_data = df.query(
         'description == @location'
         )
-    df_night = filtered_data.groupby(['night_of_week','month']).mean('laeq').reset_index()
-    df_night['night_of_week']=pd.Categorical(df_night['night_of_week'],['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
-    df_night = df_night.sort_values('night_of_week')
+    df_night_2 = filtered_data.groupby(['night_of_week','month']).mean('laeq').reset_index()
+    df_night_2['night_of_week']=pd.Categorical(df_night['night_of_week'],['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
+    df_night_2 = df_night.sort_values('night_of_week')
 
     id_graph_figure = px.line_polar(df_night,r='laeq',theta='night_of_week', color='month')
 
@@ -210,12 +210,12 @@ def update_graph4(location):
     group_labels = []
     for name in vals:
         group_labels.append(str(name))
-    hist_data = []
+    hist_data_2 = []
     for c in vals:
         ls = df_loc.loc[df_loc['hour']==c, 'laeq']
         hist_data.append(list(ls))
 
-    id_graph_figure_4 = ff.create_distplot(hist_data, group_labels, show_hist=False, show_curve=True, show_rug=False)
+    id_graph_figure_4 = ff.create_distplot(hist_data_2, group_labels, show_hist=False, show_curve=True, show_rug=False)
 
 
     id_graph_figure_4.update_traces()
