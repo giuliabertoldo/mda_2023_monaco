@@ -158,7 +158,6 @@ seaborn==0.12.2
 Send2Trash==1.8.0
 shapely==2.0.1
 six==1.16.0
-sklearn==0.0.post4
 sniffio==1.3.0
 soupsieve==2.4.1
 stack-data==0.6.2
