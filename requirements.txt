@@ -59,7 +59,7 @@ idna==3.4
 ImageHash==4.3.1
 importlib-metadata==6.4.1
 importlib-resources==5.12.0
-intel-cmplr-lic-rt==2023.0.0
+intel-cmplr-lic-rt==2023.1.0
 intel-openmp==2023.1.0
 ipykernel==6.22.0
 ipython==8.12.0
