@@ -83,9 +83,9 @@ layout = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-            dbc.Col(dbc.Stack([html.H4(children='Location:',className='header-description'),
+            dbc.Col(dbc.Stack([html.H4(children='Location:',className='header-description2'),
                     dropdown,
-                    html.H4(children='Time period:',className='header-description'),
+                    html.H4(children='Time period:',className='header-description2'),
                     date_range]), 
                     width=2),
             dbc.Col(dbc.Stack([html.H4(children='...',id='id_title'),

@@ -21,8 +21,7 @@ app = dash.Dash(__name__,title='MDA_project', external_stylesheets=[dbc.themes.B
 navBar = html.Nav(children=[
         dcc.Link('Overview',
                 href='/',
-                className='link',
-                style={"margin-right": "20px"},),
+                className='link',),
         dcc.Link('Details',
                 href='/details',
                 className='link',),
@@ -35,9 +34,7 @@ navBar = html.Nav(children=[
         "background-color": "#F7F7F7",
         "height": "50px",
         "align-items": "center",
-        "justify-content": "space-between",
-        "margin-left": "500px",  
-        "margin-right": "500px", 
+        "justify-content": "space-between", 
         "font-family": "'Roghiska', sans-serif",
         },
 )
@@ -52,7 +49,7 @@ app.layout = html.Div(
         ),
         html.Link(
             rel="stylesheet",
-            href="/assets/styles.css"  # Path to the CSS file
+            href="/assets/styles.css"
         ),
         navBar,
         dash.page_container,

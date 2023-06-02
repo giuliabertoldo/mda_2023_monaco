@@ -34,15 +34,18 @@ df_night = df_night.sort_values('night_of_week')
 vals = df_loc['hour'].unique()
 group_labels = []
 for name in vals:
-    group_labels.append(str(name))
+    group_labels.append('Hour ' + str(name))
     hist_data = []
 for c in vals:
     ls = df_loc.loc[df_loc['hour']==c, 'laeq']
     hist_data.append(list(ls))
 
-fig1 = px.line_polar(df_night,r='laeq',theta='night_of_week', color='month')
+fig1 = px.line_polar(df_night,r='laeq',theta='night_of_week', color='month', title='Noise level per day for each month',
+                     labels={
+                         'month': 'Month'
+                     }, line_close=True)
 
-fig2 = px.line(df_temp, x='count', y='laeq', color='night_of_week', title = 'think',
+fig2 = px.line(df_temp, x='count', y='laeq', color='night_of_week', title = 'Noise level per number of bars open',
                labels={
                      'laeq': 'Noise Level',
                      'count': 'Number of local establishments open',
@@ -50,14 +53,16 @@ fig2 = px.line(df_temp, x='count', y='laeq', color='night_of_week', title = 'thi
                  },
                  category_orders={
                      'night_of_week': ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
-                 })
+                 },)
 fig3 = px.density_heatmap(df_loc, x='month',y='laeq', title='Frequency of noise levels per month',
                           labels={
                      'laeq': 'Noise Level',
-                     'month': 'Month'
+                     'month': 'Month',
                  })
 fig4 = ff.create_distplot(hist_data, group_labels, show_hist=False, show_curve=True, show_rug=False)
-fig4.update_layout(title='Noise level for different hours')
+fig4.update_layout(title='Distribution of the noise level per hour')
+fig4.update_xaxes(title='Noise level')
+fig4.update_traces(hovertemplate=None, hoverinfo ='skip')
 
 
 dropdown = dcc.Dropdown(
@@ -83,7 +88,7 @@ layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(
-                        [html.H4(children='Location:',className='header-description'),
+                        [html.H4(children='Location:',className='header-description2'),
                         dropdown]
                 ),
                 dbc.Col(
@@ -135,7 +140,6 @@ layout = dbc.Container(
 
 
 @callback(
-    Output('id_title_2','children'),
     Output('id_graph_1','figure'),
     [Input('id_location_2','value'),
     ]
@@ -145,17 +149,21 @@ def update_graph1(location):
         'description == @location'
         )
     df_night_2 = filtered_data.groupby(['night_of_week','month']).mean('laeq').reset_index()
-    df_night_2['night_of_week']=pd.Categorical(df_night['night_of_week'],['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
-    df_night_2 = df_night.sort_values('night_of_week')
+    df_night_2['night_of_week']=pd.Categorical(df_night_2['night_of_week'],['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
+    df_night_2 = df_night_2.sort_values('night_of_week')
 
-    id_graph_figure = px.line_polar(df_night,r='laeq',theta='night_of_week', color='month')
+    id_graph_figure = px.line_polar(df_night_2,r='laeq',theta='night_of_week', color='month', title='Noise level per day for each month',
+                                    labels={
+                         'month': 'Month'
+                     }, line_close=True)
 
     id_graph_figure.update_traces()
 
-    return 'Analysis for location: ' + location , id_graph_figure
+    return id_graph_figure
 
 
 @callback(
+        Output('id_title_2','children'),
         Output('id_graph_2','figure'),
         [Input('id_location_2','value')
          ]
@@ -165,16 +173,20 @@ def update_graph2(location):
         'description == @location'
         )
     graph2_data = filtered_data.groupby(["count", "night_of_week"]).mean('laeq').reset_index()
-    id_graph_figure_2 = px.line(graph2_data,  x='count', y='laeq', color='night_of_week',
+    id_graph_figure_2 = px.line(graph2_data,  x='count', y='laeq', color='night_of_week', 
+                                title = 'Noise level per number of bars open',
+                                category_orders={
+                                    'night_of_week': ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+                                    },
                                 labels={
                      'laeq': 'Noise Level',
                      'count': 'Number of local establishments open',
                      'night_of_week': 'Night of the week'
-                 })
+                 },)
 
     id_graph_figure_2.update_traces(mode="markers+lines")
 
-    return id_graph_figure_2
+    return 'Analysis for location: ' + location , id_graph_figure_2
 
 
 @callback(
@@ -189,7 +201,8 @@ def update_graph3(location):
     id_graph_figure_3 = px.density_heatmap(filtered_data, x='month', y='laeq', title='Frequency of noise levels per month',
                                            labels={
                                                 'laeq': 'Noise Level',
-                                                'month': 'Month'
+                                                'month': 'Month',
+                                                'count': 'Count'
                                                 })
 
     id_graph_figure_3.update_traces()
@@ -209,14 +222,16 @@ def update_graph4(location):
     vals = filtered_data['hour'].unique()
     group_labels = []
     for name in vals:
-        group_labels.append(str(name))
+        group_labels.append('Hour ' + str(name))
     hist_data_2 = []
     for c in vals:
         ls = filtered_data.loc[filtered_data['hour']==c, 'laeq']
         hist_data_2.append(list(ls))
 
     id_graph_figure_4 = ff.create_distplot(hist_data_2, group_labels, show_hist=False, show_curve=True, show_rug=False)
-
+    id_graph_figure_4.update_layout(title='Distribution of the noise level per hour')
+    id_graph_figure_4.update_xaxes(title='Noise level')
+    id_graph_figure_4.update_traces(hovertemplate=None, hoverinfo ='skip')
 
     id_graph_figure_4.update_traces()
 

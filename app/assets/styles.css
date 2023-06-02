@@ -20,12 +20,6 @@ html{
     justify-content: center;
 }
 
-.header-emoji {
-    font-size: 48px;
-    margin: 0 auto;
-    text-align: center;
-}
-
 .header-title {
     color: #FFFFFF;
     font-size: 48px;
@@ -42,7 +36,6 @@ html{
 }
 
 .header-description2 {
-    color: #CFCFCF;
     text-align: start;
     font-size: 24.5px;
 }

@@ -105,8 +105,8 @@ layout = dbc.Container(
     [   
         html.Hr(),
         html.H5(children="We have built a model that aims to predict the noise level given a range of features, including the month,\
-                 day of the week and temperature. We found the a random forest model performed the best, with an R2 score of 0.866 \
-                and a median absolute error of 1.23.\
+                 day of the week and temperature. We found the a random forest model performed the best, with an R2 score of 0.868, \
+                 a median absolute error of 1.23 and a negative RMSE of -2.47.\
                 Below, you can see our model's predicted noise level based on the feature values that you specify.",
                 ),
         html.Hr(),
@@ -122,7 +122,7 @@ layout = dbc.Container(
                     html.H4(children='Wind speed:',className='header-description2'),
                     html.H4(children='Lc_rain',className='header-description2'),
                     html.H4(children='Daily rain:',className='header-description2'),
-                    html.H4(children='No. open:',className='header-description2'),
+                    html.H4(children='No. bars open:',className='header-description2'),
                     
                     ],
                     ), 
@@ -156,7 +156,9 @@ layout = dbc.Container(
                 dbc.Stack([
                     html.H5(children='Based on the feature values that have been specified, \
                             our model predicts the following value for the noise level:'),
-                    html.H5(children='...',id='id_text'),
+                    html.H5(children='...',id='id_text', style={
+                        'font-weight': 'bold',
+                        }),
                     ],
                     ),
                     width = 5,
