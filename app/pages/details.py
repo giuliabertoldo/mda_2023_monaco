@@ -9,12 +9,15 @@ import plotly
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+import plotly.figure_factory as ff
 import plotly.express as px
+import plotly.io as pio
 
 from data import df
 
 dash.register_page(__name__)
+
+pio.templates.default = "simple_white"
 
 df['result_timestamp'] = pd.to_datetime(df['result_timestamp'], format="%Y-%m-%d %H:%M:%S")
 df['time'] = df['result_timestamp'].dt.time
@@ -22,16 +25,24 @@ df['date'] = df['result_timestamp'].dt.date
 
 df_loc = df.query("description == 'MP 01: Naamsestraat 35  Maxim'")
 
-df_temp = df_loc.groupby(by=["night_of_week", "time"]).mean('laeq').reset_index()
-df_temp2 = df_loc.groupby(["count", "night_of_week"]).mean('laeq').reset_index()
+df_temp = df_loc.groupby(["count", "night_of_week"]).mean('laeq').reset_index()
 
+df_night = df_loc.groupby(['night_of_week','month']).mean('laeq').reset_index()
+df_night['night_of_week']=pd.Categorical(df_night['night_of_week'],['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
+df_night = df_night.sort_values('night_of_week')
 
-fig = px.line_3d(df_temp, x="time", y="night_of_week", z= "laeq", color='night_of_week')
-fig1 = px.violin(df_loc, y='laeq', title='Distribution of noise level',template="simple_white",
-                 labels={
-                     'laeq': 'Noise Level'
-                 })
-fig2 = px.line(df_temp2, x='count', y='laeq', color='night_of_week', title = 'think',template="simple_white",
+vals = df_loc['hour'].unique()
+group_labels = []
+for name in vals:
+    group_labels.append(str(name))
+    hist_data = []
+for c in vals:
+    ls = df_loc.loc[df_loc['hour']==c, 'laeq']
+    hist_data.append(list(ls))
+
+fig1 = px.line_polar(df_night,r='laeq',theta='night_of_week', color='month')
+
+fig2 = px.line(df_temp, x='count', y='laeq', color='night_of_week', title = 'think',
                labels={
                      'laeq': 'Noise Level',
                      'count': 'Number of local establishments open',
@@ -40,15 +51,13 @@ fig2 = px.line(df_temp2, x='count', y='laeq', color='night_of_week', title = 'th
                  category_orders={
                      'night_of_week': ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
                  })
-fig3 = px.density_heatmap(df_loc, x='month',y='laeq', title='Frequency of noise levels per month',template="simple_white",
+fig3 = px.density_heatmap(df_loc, x='month',y='laeq', title='Frequency of noise levels per month',
                           labels={
                      'laeq': 'Noise Level',
                      'month': 'Month'
                  })
-fig4 = px.strip(df_loc, x='laeq',y='hour', title='Noise level for each hour',template="simple_white",
-                labels={
-                     'laeq': 'Noise Level'
-                 })
+fig4 = ff.create_distplot(hist_data, group_labels, show_hist=False, show_curve=True, show_rug=False)
+fig4.update_layout(title='Noise level for different hours')
 
 
 dropdown = dcc.Dropdown(
@@ -135,10 +144,11 @@ def update_graph1(location):
     filtered_data = df.query(
         'description == @location'
         )
-    id_graph_figure = px.violin(filtered_data, y='laeq', title='Distribution of noise level',template="simple_white",
-                                labels={
-                     'laeq': 'Noise Level'
-                 })
+    df_night = filtered_data.groupby(['night_of_week','month']).mean('laeq').reset_index()
+    df_night['night_of_week']=pd.Categorical(df_night['night_of_week'],['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
+    df_night = df_night.sort_values('night_of_week')
+
+    id_graph_figure = px.line_polar(df_night,r='laeq',theta='night_of_week', color='month')
 
     id_graph_figure.update_traces()
 
@@ -155,7 +165,7 @@ def update_graph2(location):
         'description == @location'
         )
     graph2_data = filtered_data.groupby(["count", "night_of_week"]).mean('laeq').reset_index()
-    id_graph_figure_2 = px.line(graph2_data,  x='count', y='laeq', color='night_of_week',template="simple_white",
+    id_graph_figure_2 = px.line(graph2_data,  x='count', y='laeq', color='night_of_week',
                                 labels={
                      'laeq': 'Noise Level',
                      'count': 'Number of local establishments open',
@@ -177,7 +187,6 @@ def update_graph3(location):
         'description == @location'
         )
     id_graph_figure_3 = px.density_heatmap(filtered_data, x='month', y='laeq', title='Frequency of noise levels per month',
-                                           template="simple_white",
                                            labels={
                                                 'laeq': 'Noise Level',
                                                 'month': 'Month'
@@ -197,10 +206,17 @@ def update_graph4(location):
     filtered_data = df.query(
         'description == @location'
         )
-    id_graph_figure_4 = px.strip(filtered_data, x='laeq', y='hour', title='Noise level for each hour',template="simple_white",
-                                 labels={
-                     'laeq': 'Noise Level'
-                 })
+    vals = filtered_data['hour'].unique()
+    group_labels = []
+    for name in vals:
+        group_labels.append(str(name))
+    hist_data = []
+    for c in vals:
+        ls = df_loc.loc[df_loc['hour']==c, 'laeq']
+        hist_data.append(list(ls))
+
+    id_graph_figure_4 = ff.create_distplot(hist_data, group_labels, show_hist=False, show_curve=True, show_rug=False)
+
 
     id_graph_figure_4.update_traces()
 

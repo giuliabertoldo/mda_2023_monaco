@@ -21,7 +21,7 @@ df_pred = pd.DataFrame()
 df_pred[['description', 'day_of_week', 'night_of_week', 'month', 'hour', 'lc_dwptemp','lc_windspeed', 'lc_rainin',
           'lc_dailyrain', 'count']] = [['MP 01: Naamsestraat 35  Maxim','Monday','Monday',1,1,10,2,0.015,0.025,3]]
 
-model = pickle.load(open('pickle_rf_model.pkl', 'rb'))
+model = pd.read_pickle('s3://mda.project.monaco/pickle_rf_model.pkl')
 pred = model.predict(df_pred)
 
 
