@@ -17,6 +17,7 @@ from data import df
 
 app = dash.Dash(__name__,title='MDA_project', external_stylesheets=[dbc.themes.BOOTSTRAP],serve_locally = False,use_pages=True)
 
+server = app.server
 
 navBar = html.Nav(children=[
         dcc.Link('Overview',
