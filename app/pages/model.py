@@ -22,9 +22,7 @@ df_pred = pd.DataFrame()
 df_pred[['description', 'day_of_week', 'night_of_week', 'month', 'hour', 'lc_dwptemp','lc_windspeed', 'lc_rainin',
           'lc_dailyrain', 'count']] = [['MP 01: Naamsestraat 35  Maxim','Monday','Monday',1,1,10,2,0.015,0.025,3]]
 
-zf = ZipFile('/Users/christianbutcher/Documents/MDA/project_real/mda_2023_monaco/model_to_use.pkl.zip', 'r')
-model = pd.read_pickle(zf.open('model_to_use.pkl'))
-zf.close()
+model = pd.read_pickle('s3://mda.project.monaco/model_to_use.pkl.zip')
 
 pred = model.predict(df_pred)
 
