@@ -21,11 +21,11 @@ df_pred = pd.DataFrame()
 df_pred[['description', 'day_of_week', 'night_of_week', 'month', 'hour', 'lc_dwptemp','lc_windspeed', 'lc_rainin',
           'lc_dailyrain', 'count']] = [['MP 01: Naamsestraat 35  Maxim','Monday','Monday',1,1,10,2,0.015,0.025,3]]
 
-model = pd.read_pickle('s3://mda.project.monaco/new_model_2.pkl')
+model = pd.read_pickle('s3://mda.project.monaco/pickle_rf_model.pkl')
 pred = model.predict(df_pred)
 
 
-clf = model[-1]
+clf = model.best_estimator_[-1]
 feat_imp = list(zip(clf.feature_names_in_, clf.feature_importances_))
 df_importances = pd.DataFrame(feat_imp, columns=['Feature', 'Importance']).sort_values(by='Importance', ascending=False)
 df_imp = df_importances.groupby('Feature').sum('Importance').sort_values(by='Importance', ascending=False).reset_index()
