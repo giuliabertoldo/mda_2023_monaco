@@ -25,7 +25,7 @@ model = pd.read_pickle('s3://mda.project.monaco/new_model_2.pkl')
 pred = model.predict(df_pred)
 
 
-clf = model.best_estimator_[-1]
+clf = model
 feat_imp = list(zip(clf.feature_names_in_, clf.feature_importances_))
 df_importances = pd.DataFrame(feat_imp, columns=['Feature', 'Importance']).sort_values(by='Importance', ascending=False)
 df_imp = df_importances.groupby('Feature').sum('Importance').sort_values(by='Importance', ascending=False).reset_index()
