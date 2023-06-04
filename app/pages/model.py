@@ -23,9 +23,7 @@ df_pred = pd.DataFrame()
 df_pred[['description', 'day_of_week', 'night_of_week', 'month', 'hour', 'lc_dwptemp','lc_windspeed', 'lc_rainin',
           'lc_dailyrain', 'count']] = [['MP 01: Naamsestraat 35  Maxim','Monday','Monday',1,1,10,2,0.015,0.025,3]]
 
-ifile = bz2.BZ2File("model.pbz2",'rb')
-model = pd.read_pickle(ifile)
-ifile.close()
+model = pd.read_pickle('s3://mda.project.monaco/model_to_use.pkl.zip')
 
 
 pred = model.predict(df_pred)
